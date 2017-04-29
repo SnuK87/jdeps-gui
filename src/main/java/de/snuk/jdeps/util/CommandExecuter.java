@@ -11,7 +11,7 @@ import de.snuk.jdeps.model.MyPackage;
 
 public class CommandExecuter {
 
-	public static List<String> executeCommand(final String command) throws IOException {
+	public static List<MyPackage> executeCommand(final String command) throws IOException {
 		final Process exec = Runtime.getRuntime().exec(command);
 		final BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream()));
 		final BufferedReader error = new BufferedReader(new InputStreamReader(exec.getErrorStream()));
@@ -31,9 +31,8 @@ public class CommandExecuter {
 		error.close();
 
 		List<MyPackage> parseResult = parseResult(output);
-		parseResult.forEach(System.out::println);
 
-		return output;
+		return parseResult;
 	}
 
 	private static List<MyPackage> parseResult(List<String> lines) {
