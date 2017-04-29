@@ -8,10 +8,12 @@ import java.nio.file.LinkOption;
 import java.nio.file.Paths;
 import java.util.List;
 
+import de.snuk.jdeps.util.CommandExecuter;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -22,6 +24,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
 	private String jdepsPath;
+	private Button button;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -31,14 +34,26 @@ public class Main extends Application {
 
 		MenuBar menuBar = createMenuBar();
 
-		((VBox) scene.getRoot()).getChildren().add(menuBar);
+		button = new Button("Go");
+		button.setOnAction(event -> {
+			String cmd = jdepsPath + " " + "C:\\Users\\snuk\\workspace\\shutdowntimer\\target\\shutdowntimer-1.0.0.jar";
+			try {
+				List<String> executeCommand = CommandExecuter.executeCommand(cmd);
+				// executeCommand.forEach(System.out::println);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+
+		((VBox) scene.getRoot()).getChildren().addAll(menuBar, button);
 
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
 		deserializeConfig();
 
-		System.out.println(jdepsPath);
+		// System.out.println(jdepsPath);
 		if (jdepsPath == null) {
 			Alert alert = new Alert(AlertType.INFORMATION);
 			alert.setTitle("jdeps not found");
@@ -52,8 +67,10 @@ public class Main extends Application {
 			File showOpenDialog = fileChooser.showOpenDialog(primaryStage);
 
 			if (showOpenDialog != null) {
-				System.out.println(showOpenDialog.getAbsolutePath());
-				serializePath(showOpenDialog.getAbsolutePath());
+				// System.out.println(showOpenDialog.getAbsolutePath());
+				String substring = showOpenDialog.getAbsolutePath().substring(0,
+						showOpenDialog.getAbsolutePath().length() - 4);
+				serializePath(substring);
 			}
 		}
 
