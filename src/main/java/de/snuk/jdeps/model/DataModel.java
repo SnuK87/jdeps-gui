@@ -37,11 +37,7 @@ public class DataModel {
 		return projectData;
 	}
 
-	public void addProjectData(MyPackage p) {
-		this.projectData.add(p);
-	}
-
-	public void addProjectDataList(List<MyPackage> packages) {
+	public void addProjectData(List<MyPackage> packages) {
 		this.projectData.addAll(packages);
 	}
 

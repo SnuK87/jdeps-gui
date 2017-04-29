@@ -51,7 +51,7 @@ public class CommandExecuter {
 
 		for (int i = 0; i < lines.size(); i++) {
 			String line = lines.get(i);
-			System.out.println(line);
+			// System.out.println(line);
 			if (currentPackage == null) {
 				int indexOf = line.indexOf(" ");
 				String substring = line.substring(0, indexOf);

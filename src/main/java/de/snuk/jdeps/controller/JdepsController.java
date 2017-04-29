@@ -1,6 +1,5 @@
 package de.snuk.jdeps.controller;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import javafx.scene.control.TreeView;
 public class JdepsController {
 
 	private DataModel model;
-
 	private JdepsView view;
 
 	public JdepsController(DataModel model) {
@@ -53,7 +51,7 @@ public class JdepsController {
 		String cmd = model.getJdepsPath() + " " + "C:\\dev\\workspace\\jdeps-gui\\target\\jdeps-gui-0.0.1-SNAPSHOT.jar";
 		try {
 			List<MyPackage> result = CommandExecuter.executeCommand(cmd);
-			model.addProjectDataList(result);
+			model.addProjectData(result);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -64,20 +62,4 @@ public class JdepsController {
 	public void show() {
 		view.show(model.getStage());
 	}
-
-	/**
-	 * Tries to serialize the config file.
-	 *
-	 * @param path
-	 */
-	private void serializePath(String path) {
-		try {
-			FileWriter writer = new FileWriter("config.cfg");
-			writer.write(path);
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 }
