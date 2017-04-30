@@ -1,6 +1,7 @@
 package de.snuk.jdeps.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -69,13 +70,25 @@ public class JdepsController {
 	private void onSearch() {
 		String searchText = view.getTfSearch().getText();
 		if (!searchText.equals("")) {
-			List<MyPackage> collect = this.model.getOriginalProjectData().stream()
-					.filter(p -> p.getName().contains(searchText)).collect(Collectors.toList());
-			this.model.clearProjectData();
-			this.model.addProjectData(collect);
+
+			List<MyPackage> collect = new ArrayList<>();
+
+			model.getOriginalProjectData().stream().forEach(p -> {
+				List<MyClass> collect2 = p.getClasses().stream().filter(c -> c.getName().contains(searchText))
+						.collect(Collectors.toList());
+
+				if (!collect2.isEmpty()) {
+					MyPackage filteredPackage = new MyPackage(p.getName());
+					filteredPackage.setClasses(collect2);
+					collect.add(filteredPackage);
+				}
+			});
+
+			model.clearProjectData();
+			model.addProjectData(collect);
 		} else {
-			this.model.clearProjectData();
-			this.model.addProjectData(this.model.getOriginalProjectData());
+			model.clearProjectData();
+			model.addProjectData(model.getOriginalProjectData());
 		}
 	}
 
@@ -109,7 +122,6 @@ public class JdepsController {
 				protected void succeeded() {
 					super.succeeded();
 					try {
-						// model.addProjectData(get());
 						model.addOriginalProjectData(get());
 						view.removeProgressBar();
 						model.setBtnGoDisabled(false);
