@@ -13,10 +13,13 @@ import de.snuk.jdeps.util.CommandExecuter;
 import de.snuk.jdeps.view.JdepsView;
 import de.snuk.jdeps.view.StartAnalyzeDialog;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
@@ -29,13 +32,22 @@ public class JdepsController {
 		this.model = model;
 		this.view = new JdepsView();
 
+		model.getHasError().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+			view.setError(observable.getValue());
+		});
+
+		model.getStatusText().addListener((ChangeListener<String>) (observable, oldValue, newValue) -> {
+			view.getLblStatusText().setText(observable.getValue());
+		});
+
 		view.getGoButton().setOnAction(event -> onGo());
 		view.getGoButton().disableProperty().bind(this.model.getBtnGoDisabled());
 
 		view.getSearchButton().setOnAction(event -> {
 			onSearch();
 		});
-		view.getSearchButton().disableProperty().bind(this.model.getBtnSearchDisabled());
+		view.getSearchButton().disableProperty().bind(this.model.getSearchDisabled());
+		view.getTfSearch().disableProperty().bind(this.model.getSearchDisabled());
 
 		view.getTfSearch().setOnKeyPressed(event -> {
 			if (event.getCode().equals(KeyCode.ENTER)) {
@@ -47,12 +59,17 @@ public class JdepsController {
 			TreeView<String> tree = view.getTree();
 
 			TreeItem<String> rootItem = new TreeItem<>(this.model.getProjectName().get());
+			Image imageProject = new Image(getClass().getResourceAsStream("/project.png"));
+			rootItem.setGraphic(new ImageView(imageProject));
+
 			rootItem.setExpanded(true);
 
 			List<? extends MyPackage> projectData = c.getList();
 
 			projectData.forEach(p -> {
 				TreeItem<String> item = new TreeItem<>(p.getName());
+				Image imagePackage = new Image(getClass().getResourceAsStream("/package.png"));
+				item.setGraphic(new ImageView(imagePackage));
 
 				List<MyClass> classes = p.getClasses();
 				classes.forEach(cl -> {
@@ -70,22 +87,21 @@ public class JdepsController {
 	private void onSearch() {
 		String searchText = view.getTfSearch().getText();
 		if (!searchText.equals("")) {
-
-			List<MyPackage> collect = new ArrayList<>();
+			List<MyPackage> filteredPackages = new ArrayList<>();
 
 			model.getOriginalProjectData().stream().forEach(p -> {
-				List<MyClass> collect2 = p.getClasses().stream().filter(c -> c.getName().contains(searchText))
+				List<MyClass> filteredClasses = p.getClasses().stream().filter(c -> c.getName().contains(searchText))
 						.collect(Collectors.toList());
 
-				if (!collect2.isEmpty()) {
+				if (!filteredClasses.isEmpty()) {
 					MyPackage filteredPackage = new MyPackage(p.getName());
-					filteredPackage.setClasses(collect2);
-					collect.add(filteredPackage);
+					filteredPackage.setClasses(filteredClasses);
+					filteredPackages.add(filteredPackage);
 				}
 			});
 
 			model.clearProjectData();
-			model.addProjectData(collect);
+			model.addProjectData(filteredPackages);
 		} else {
 			model.clearProjectData();
 			model.addProjectData(model.getOriginalProjectData());
@@ -93,7 +109,6 @@ public class JdepsController {
 	}
 
 	private void onGo() {
-
 		Stage myDialog = new StartAnalyzeDialog(model.getStage(), val -> {
 			model.setSelectedFile(new File(val));
 			model.setProjectName(new SimpleStringProperty(model.getSelectedFile().getName()));
@@ -104,7 +119,7 @@ public class JdepsController {
 		File selectedFile = model.getSelectedFile();
 
 		if (selectedFile != null && selectedFile.exists()) {
-			model.clearProjectData();
+			model.clearOriginalProjectData();
 			model.setBtnGoDisabled(true);
 
 			String cmd = model.getJdepsPath() + " " + selectedFile.getAbsolutePath();
@@ -125,6 +140,9 @@ public class JdepsController {
 						model.addOriginalProjectData(get());
 						view.removeProgressBar();
 						model.setBtnGoDisabled(false);
+						model.setSearchDisabled(false);
+						model.setStatusText("");
+						model.setHasError(false);
 					} catch (InterruptedException | ExecutionException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -134,7 +152,8 @@ public class JdepsController {
 
 			new Thread(task).start();
 		} else {
-			// TODO show error
+			model.setStatusText("Unable to read file.");
+			model.setHasError(true);
 		}
 	}
 

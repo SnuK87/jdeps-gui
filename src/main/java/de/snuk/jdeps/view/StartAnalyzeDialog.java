@@ -4,41 +4,55 @@ import java.io.File;
 
 import de.snuk.jdeps.util.DialogFunc;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class StartAnalyzeDialog extends Stage {
 
-	// TODO style and layout
+	private TextField tfFile;
+
 	public StartAnalyzeDialog(Stage owner, DialogFunc func) {
 		super();
 		initOwner(owner);
-		setTitle("Analyze jar");
+		setTitle("Analyze Project");
 		initModality(Modality.APPLICATION_MODAL);
+		setMinWidth(300.0);
+		setMinHeight(200.0);
 
-		Group root = new Group();
+		AnchorPane root = new AnchorPane();
 		Scene scene = new Scene(root, 400, 300);
 		setScene(scene);
 
+		GridPane gridPane = createFormPane(owner);
+		HBox buttonPane = createButtonPane(func);
+
+		root.getChildren().addAll(gridPane, buttonPane);
+		AnchorPane.setBottomAnchor(buttonPane, 10.0);
+		AnchorPane.setRightAnchor(buttonPane, 10.0);
+		AnchorPane.setTopAnchor(gridPane, 10.0);
+	}
+
+	private GridPane createFormPane(Stage owner) {
 		GridPane gridPane = new GridPane();
 		gridPane.setPadding(new Insets(5));
 		gridPane.setHgap(5);
-		gridPane.setVgap(5);
+		gridPane.setVgap(10);
 
-		Label lblFile = new Label("Jar file: ");
+		Label lblFile = new Label("Jar File: ");
 		gridPane.add(lblFile, 0, 0);
 
-		TextField tfFile = new TextField();
-		gridPane.add(tfFile, 1, 0);
+		tfFile = new TextField();
+		gridPane.add(tfFile, 1, 0, 2, 1);
 
 		Button button = new Button("...");
 		button.setOnAction(event -> {
@@ -53,7 +67,7 @@ public class StartAnalyzeDialog extends Stage {
 			}
 		});
 
-		gridPane.add(button, 2, 0);
+		gridPane.add(button, 3, 0);
 
 		ToggleGroup buttonGroup = new ToggleGroup();
 
@@ -71,7 +85,19 @@ public class StartAnalyzeDialog extends Stage {
 		gridPane.add(rbPackage, 1, 1);
 		gridPane.add(rbClass, 2, 1);
 
+		return gridPane;
+	}
+
+	private HBox createButtonPane(DialogFunc func) {
+		HBox buttonPane = new HBox();
+		buttonPane.setSpacing(10.0);
+
+		Button btnCancel = new Button("Cancel");
+		btnCancel.setMinWidth(100.0);
+		btnCancel.setOnAction(event -> close());
+
 		Button btnStart = new Button("Start");
+		btnStart.setMinWidth(100.0);
 		btnStart.setOnAction(event -> {
 
 			// TODO better validation
@@ -83,13 +109,8 @@ public class StartAnalyzeDialog extends Stage {
 			close();
 		});
 
-		Button btnCancel = new Button("Cancel");
-		btnCancel.setOnAction(event -> close());
+		buttonPane.getChildren().addAll(btnCancel, btnStart);
 
-		gridPane.add(btnCancel, 1, 2);
-		gridPane.add(btnStart, 2, 2);
-
-		root.getChildren().add(gridPane);
+		return buttonPane;
 	}
-
 }

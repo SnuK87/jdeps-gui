@@ -5,6 +5,7 @@ import java.util.List;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
@@ -18,12 +19,15 @@ public class DataModel {
 	private ObservableList<MyPackage> originalProjectData = FXCollections.observableArrayList();
 
 	private String jdepsPath;
-	private StringProperty projectName;
 	private File selectedFile;
 	private Stage stage;
 
+	private StringProperty projectName;
+	private StringProperty statusText = new SimpleStringProperty();
+
+	private BooleanProperty hasError = new SimpleBooleanProperty(false);
 	private BooleanProperty btnGoDisabled = new SimpleBooleanProperty(false);
-	private BooleanProperty btnSearchDisabled = new SimpleBooleanProperty(false);
+	private BooleanProperty searchDisabled = new SimpleBooleanProperty(true);
 
 	public DataModel(Stage stage) {
 		this.stage = stage;
@@ -95,11 +99,27 @@ public class DataModel {
 		this.btnGoDisabled.set(btnGoDisabled);
 	}
 
-	public BooleanProperty getBtnSearchDisabled() {
-		return btnSearchDisabled;
+	public BooleanProperty getSearchDisabled() {
+		return searchDisabled;
 	}
 
-	public void setBtnSearchDisabled(boolean btnSearchDisabled) {
-		this.btnSearchDisabled.set(btnSearchDisabled);
+	public void setSearchDisabled(boolean searchDisabled) {
+		this.searchDisabled.set(searchDisabled);
+	}
+
+	public BooleanProperty getHasError() {
+		return hasError;
+	}
+
+	public void setHasError(boolean hasError) {
+		this.hasError.set(hasError);
+	}
+
+	public StringProperty getStatusText() {
+		return statusText;
+	}
+
+	public void setStatusText(String statusText) {
+		this.statusText.set(statusText);
 	}
 }

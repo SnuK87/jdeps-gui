@@ -2,10 +2,10 @@ package de.snuk.jdeps.view;
 
 import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -16,8 +16,11 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class JdepsView {
@@ -28,39 +31,20 @@ public class JdepsView {
 	private TreeView<String> tree;
 	private ProgressBar progressBar;
 	private HBox footer;
-	private Label lblStatus;
+	private FontAwesomeIconView lblStatus;
+	private Label lblStatusText;
 	private TextField tfSearch;
 
-	// TODO style and layout
 	public JdepsView() {
 		scene = new Scene(new VBox(), 800, 600);
 
 		MenuBar menuBar = createMenuBar();
 
-		// header = new HBox();
 		GridPane header = new GridPane();
 		header.setPadding(new Insets(5));
 
 		btnGo = GlyphsDude.createIconButton(FontAwesomeIcon.PLAY);
 		btnGo.setTooltip(new Tooltip("Start analyzing"));
-		// button.setStyle(
-		// "-fx-shadow-highlight-color : transparent;" + // if you don't want a
-		// 3d effect highlight.
-		// "-fx-outer-border : transparent;" + // if you don't want a button
-		// border.
-		// "-fx-inner-border : transparent;" + // if you don't want a button
-		// border.
-		// "-fx-focus-color: transparent;" + // if you don't want any focus
-		// ring.
-		// "-fx-faint-focus-color : transparent;" + // if you don't want any
-		// focus ring.
-		// "-fx-base : palegreen;" + // if you want a gradient shaded button
-		// that lightens on hover and darkens on arming.
-		// // "-fx-body-color: palegreen;" + // instead of -fx-base, if you want
-		// a flat shaded button that does not lighten on hover and darken on
-		// arming.
-		// "-fx-font-size: 80px;"
-		// );
 
 		tfSearch = new TextField();
 		btnSearch = GlyphsDude.createIconButton(FontAwesomeIcon.SEARCH);
@@ -98,10 +82,20 @@ public class JdepsView {
 	private HBox createFooter() {
 		footer = new HBox();
 		footer.setPadding(new Insets(2));
+		footer.setSpacing(5.0);
 
-		FontAwesomeIcon check = FontAwesomeIcon.CHECK_CIRCLE;
-		lblStatus = GlyphsDude.createIconLabel(check, null, "16px", "16px", ContentDisplay.RIGHT);
-		footer.getChildren().add(lblStatus);
+		lblStatus = new FontAwesomeIconView(FontAwesomeIcon.CHECK);
+		lblStatus.setFill(Color.GREEN);
+		lblStatus.setSize("16px");
+
+		lblStatusText = new Label("");
+		lblStatusText.setFont(Font.font(12));
+
+		Pane spacer = new Pane();
+
+		footer.getChildren().addAll(lblStatus, lblStatusText, spacer);
+
+		HBox.setHgrow(spacer, Priority.ALWAYS);
 
 		return footer;
 	}
@@ -124,6 +118,16 @@ public class JdepsView {
 		return menuBar;
 	}
 
+	public void setError(boolean hasError) {
+		if (hasError) {
+			lblStatus.setIcon(FontAwesomeIcon.REMOVE);
+			lblStatus.setFill(Color.RED);
+		} else {
+			lblStatus.setIcon(FontAwesomeIcon.CHECK);
+			lblStatus.setFill(Color.GREEN);
+		}
+	}
+
 	public Button getGoButton() {
 		return btnGo;
 	}
@@ -136,8 +140,12 @@ public class JdepsView {
 		return tree;
 	}
 
-	public Label getStatusLabel() {
+	public FontAwesomeIconView getStatusLabel() {
 		return lblStatus;
+	}
+
+	public Label getLblStatusText() {
+		return lblStatusText;
 	}
 
 	public TextField getTfSearch() {
