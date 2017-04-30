@@ -1,6 +1,5 @@
 package de.snuk.jdeps.view;
 
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
@@ -31,8 +30,8 @@ public class JdepsView {
 		((VBox) scene.getRoot()).getChildren().addAll(menuBar, button, tree);
 	}
 
-	public void addProgressBar(SimpleDoubleProperty prop) {
-		progressBar.progressProperty().bind(prop);
+	public void addProgressBar() {
+		progressBar.setProgress(-1);
 		((VBox) scene.getRoot()).getChildren().add(progressBar);
 	}
 

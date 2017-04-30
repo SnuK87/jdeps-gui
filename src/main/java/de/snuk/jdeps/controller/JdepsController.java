@@ -1,5 +1,6 @@
 package de.snuk.jdeps.controller;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -8,11 +9,12 @@ import de.snuk.jdeps.model.MyClass;
 import de.snuk.jdeps.model.MyPackage;
 import de.snuk.jdeps.util.CommandExecuter;
 import de.snuk.jdeps.view.JdepsView;
-import javafx.beans.property.SimpleDoubleProperty;
+import de.snuk.jdeps.view.StartAnalyzeDialog;
 import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.stage.Stage;
 
 public class JdepsController {
 
@@ -50,42 +52,46 @@ public class JdepsController {
 	}
 
 	private void onGo() {
-		// String cmd = model.getJdepsPath() + " " +
-		// "C:\\dev\\workspace\\jdeps-gui\\target\\jdeps-gui-0.0.1-SNAPSHOT.jar";
-		String cmd = model.getJdepsPath() + " " + "C:\\test\\javaws.jar";
 
-		// ProgressBar bar = new ProgressBar();
-		SimpleDoubleProperty prop = new SimpleDoubleProperty(0);
+		Stage myDialog = new StartAnalyzeDialog(model.getStage(), val -> model.setSelectedFile(new File(val)));
+		myDialog.sizeToScene();
+		myDialog.showAndWait();
 
-		view.addProgressBar(prop);
+		File selectedFile = model.getSelectedFile();
 
-		Task<List<MyPackage>> task = new Task<List<MyPackage>>() {
+		if (selectedFile != null && selectedFile.exists()) {
+			model.clearProjectData();
+			view.getButton().setDisable(true);
 
-			@Override
-			protected List<MyPackage> call() throws Exception {
-				return CommandExecuter.executeCommand(cmd, prop);
-			}
+			String cmd = model.getJdepsPath() + " " + selectedFile.getAbsolutePath();
 
-			@Override
-			protected void succeeded() {
-				super.succeeded();
-				try {
-					prop.set(1);
+			view.addProgressBar();
 
-					Thread.sleep(500);
-					model.addProjectData(get());
-					view.removeProgressBar();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ExecutionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			Task<List<MyPackage>> task = new Task<List<MyPackage>>() {
+
+				@Override
+				protected List<MyPackage> call() throws Exception {
+					return CommandExecuter.executeCommand(cmd);
 				}
-			}
-		};
 
-		new Thread(task).start();
+				@Override
+				protected void succeeded() {
+					super.succeeded();
+					try {
+						model.addProjectData(get());
+						view.removeProgressBar();
+						view.getButton().setDisable(false);
+					} catch (InterruptedException | ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			};
+
+			new Thread(task).start();
+		} else {
+			// TODO show error
+		}
 	}
 
 	public void show() {

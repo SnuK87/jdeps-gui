@@ -9,35 +9,28 @@ import java.util.stream.Collectors;
 
 import de.snuk.jdeps.model.MyClass;
 import de.snuk.jdeps.model.MyPackage;
-import javafx.beans.property.SimpleDoubleProperty;
 
 public class CommandExecuter {
 
-	public static List<MyPackage> executeCommand(final String command, SimpleDoubleProperty prop) throws IOException {
+	public static List<MyPackage> executeCommand(final String command) throws IOException {
 		final Process exec = Runtime.getRuntime().exec(command);
 		final BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream()));
 		final BufferedReader error = new BufferedReader(new InputStreamReader(exec.getErrorStream()));
 
-		prop.set(0.15d);
-
 		List<String> output = new ArrayList<>();
 
-		System.out.println("start");
 		output.addAll(reader.lines().map(s -> s.trim()).collect(Collectors.toList()));
 		output.addAll(error.lines().collect(Collectors.toList()));
-		System.out.println("end");
-
-		prop.set(0.8d);
 
 		reader.close();
 		error.close();
 
-		List<MyPackage> parseResult = parseResult(output, prop);
+		List<MyPackage> parseResult = parseResult(output);
 
 		return parseResult;
 	}
 
-	private static List<MyPackage> parseResult(List<String> lines, SimpleDoubleProperty prop) {
+	private static List<MyPackage> parseResult(List<String> lines) {
 
 		lines.remove(0);
 		lines.remove(0);
@@ -80,5 +73,4 @@ public class CommandExecuter {
 
 		return output;
 	}
-
 }
