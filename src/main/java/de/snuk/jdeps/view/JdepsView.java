@@ -24,7 +24,6 @@ public class JdepsView {
 		MenuBar menuBar = createMenuBar();
 		button = new Button("Go");
 		tree = new TreeView<>();
-
 		progressBar = new ProgressBar();
 
 		((VBox) scene.getRoot()).getChildren().addAll(menuBar, button, tree);

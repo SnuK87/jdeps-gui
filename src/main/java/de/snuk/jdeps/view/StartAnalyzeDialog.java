@@ -75,9 +75,9 @@ public class StartAnalyzeDialog extends Stage {
 
 			// TODO better validation
 			if (tfFile.getText().equals("")) {
-				func.test(null);
+				func.setSelectedFilePath(null);
 			} else {
-				func.test(tfFile.getText());
+				func.setSelectedFilePath(tfFile.getText());
 			}
 			close();
 		});

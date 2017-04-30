@@ -13,9 +13,9 @@ import de.snuk.jdeps.model.MyPackage;
 public class CommandExecuter {
 
 	public static List<MyPackage> executeCommand(final String command) throws IOException {
-		final Process exec = Runtime.getRuntime().exec(command);
-		final BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream()));
-		final BufferedReader error = new BufferedReader(new InputStreamReader(exec.getErrorStream()));
+		final Process process = Runtime.getRuntime().exec(command);
+		final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		final BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
 		List<String> output = new ArrayList<>();
 

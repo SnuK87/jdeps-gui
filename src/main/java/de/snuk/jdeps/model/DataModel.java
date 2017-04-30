@@ -3,6 +3,8 @@ package de.snuk.jdeps.model;
 import java.io.File;
 import java.util.List;
 
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
@@ -11,7 +13,7 @@ public class DataModel {
 
 	private ObservableList<MyPackage> projectData = FXCollections.observableArrayList();
 	private String jdepsPath;
-	private String projectName;
+	private StringProperty projectName;
 	private File selectedFile;
 	private Stage stage;
 
@@ -27,11 +29,11 @@ public class DataModel {
 		this.jdepsPath = jdepsPath;
 	}
 
-	public String getProjectName() {
+	public ObservableStringValue getProjectName() {
 		return projectName;
 	}
 
-	public void setProjectName(String projectName) {
+	public void setProjectName(StringProperty projectName) {
 		this.projectName = projectName;
 	}
 

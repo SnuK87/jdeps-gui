@@ -10,6 +10,7 @@ import de.snuk.jdeps.model.MyPackage;
 import de.snuk.jdeps.util.CommandExecuter;
 import de.snuk.jdeps.view.JdepsView;
 import de.snuk.jdeps.view.StartAnalyzeDialog;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.scene.control.TreeItem;
@@ -27,15 +28,15 @@ public class JdepsController {
 
 		view.getButton().setOnAction(event -> onGo());
 
-		model.getProjectData().addListener((ListChangeListener<MyPackage>) c -> {
+		this.model.getProjectData().addListener((ListChangeListener<MyPackage>) c -> {
 			TreeView<String> tree = view.getTree();
 
-			TreeItem<String> rootItem = new TreeItem<>("Project");
+			TreeItem<String> rootItem = new TreeItem<>(this.model.getProjectName().get());
 			rootItem.setExpanded(true);
 
-			List<? extends MyPackage> addedSubList = c.getList();
+			List<? extends MyPackage> projectData = c.getList();
 
-			addedSubList.forEach(p -> {
+			projectData.forEach(p -> {
 				TreeItem<String> item = new TreeItem<>(p.getName());
 
 				List<MyClass> classes = p.getClasses();
@@ -53,7 +54,10 @@ public class JdepsController {
 
 	private void onGo() {
 
-		Stage myDialog = new StartAnalyzeDialog(model.getStage(), val -> model.setSelectedFile(new File(val)));
+		Stage myDialog = new StartAnalyzeDialog(model.getStage(), val -> {
+			model.setSelectedFile(new File(val));
+			model.setProjectName(new SimpleStringProperty(model.getSelectedFile().getName()));
+		});
 		myDialog.sizeToScene();
 		myDialog.showAndWait();
 
