@@ -1,10 +1,12 @@
 package de.snuk.jdeps.view;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -15,16 +17,27 @@ public class JdepsView {
 	private Scene scene;
 	private TreeView<String> tree;
 
+	private ProgressBar progressBar;
+
 	public JdepsView() {
 		scene = new Scene(new VBox(), 800, 600);
 
 		MenuBar menuBar = createMenuBar();
-
 		button = new Button("Go");
+		tree = new TreeView<>();
 
-		tree = createTree();
+		progressBar = new ProgressBar();
 
 		((VBox) scene.getRoot()).getChildren().addAll(menuBar, button, tree);
+	}
+
+	public void addProgressBar(SimpleDoubleProperty prop) {
+		progressBar.progressProperty().bind(prop);
+		((VBox) scene.getRoot()).getChildren().add(progressBar);
+	}
+
+	public void removeProgressBar() {
+		((VBox) scene.getRoot()).getChildren().remove(progressBar);
 	}
 
 	public void show(Stage stage) {
@@ -49,13 +62,6 @@ public class JdepsView {
 		menuBar.getMenus().addAll(menuOne, menuTwo, menuThree);
 
 		return menuBar;
-	}
-
-	private TreeView<String> createTree() {
-
-		TreeView<String> tree = new TreeView<>();
-
-		return tree;
 	}
 
 	public Button getButton() {

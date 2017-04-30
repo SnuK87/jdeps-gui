@@ -5,45 +5,42 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.snuk.jdeps.model.MyClass;
 import de.snuk.jdeps.model.MyPackage;
+import javafx.beans.property.SimpleDoubleProperty;
 
 public class CommandExecuter {
 
-	public static List<MyPackage> executeCommand(final String command) throws IOException {
+	public static List<MyPackage> executeCommand(final String command, SimpleDoubleProperty prop) throws IOException {
 		final Process exec = Runtime.getRuntime().exec(command);
 		final BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream()));
 		final BufferedReader error = new BufferedReader(new InputStreamReader(exec.getErrorStream()));
 
+		prop.set(0.15d);
+
 		List<String> output = new ArrayList<>();
 
-		String line = null;
-		while ((line = reader.readLine()) != null) {
-			output.add(line.trim());
-		}
+		System.out.println("start");
+		output.addAll(reader.lines().map(s -> s.trim()).collect(Collectors.toList()));
+		output.addAll(error.lines().collect(Collectors.toList()));
+		System.out.println("end");
 
-		while ((line = error.readLine()) != null) {
-			output.add(line);
-		}
+		prop.set(0.8d);
 
 		reader.close();
 		error.close();
 
-		List<MyPackage> parseResult = parseResult(output);
+		List<MyPackage> parseResult = parseResult(output, prop);
 
 		return parseResult;
 	}
 
-	private static List<MyPackage> parseResult(List<String> lines) {
-
-		// lines.forEach(System.out::println);
+	private static List<MyPackage> parseResult(List<String> lines, SimpleDoubleProperty prop) {
 
 		lines.remove(0);
 		lines.remove(0);
-
-		// System.out.println("--------");
-		// lines.forEach(System.out::println);
 
 		List<MyPackage> output = new ArrayList<>();
 
