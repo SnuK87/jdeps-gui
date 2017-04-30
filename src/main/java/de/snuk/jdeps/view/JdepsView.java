@@ -22,12 +22,12 @@ import javafx.stage.Stage;
 
 public class JdepsView {
 
-	private Button button;
+	private Button btnGo;
+	private Button btnSearch;
 	private Scene scene;
 	private TreeView<String> tree;
 	private ProgressBar progressBar;
 	private HBox footer;
-	// private HBox header;
 	private Label lblStatus;
 	private TextField tfSearch;
 
@@ -41,8 +41,8 @@ public class JdepsView {
 		GridPane header = new GridPane();
 		header.setPadding(new Insets(5));
 
-		button = GlyphsDude.createIconButton(FontAwesomeIcon.PLAY);
-		button.setTooltip(new Tooltip("Start analyzing"));
+		btnGo = GlyphsDude.createIconButton(FontAwesomeIcon.PLAY);
+		btnGo.setTooltip(new Tooltip("Start analyzing"));
 		// button.setStyle(
 		// "-fx-shadow-highlight-color : transparent;" + // if you don't want a
 		// 3d effect highlight.
@@ -63,13 +63,12 @@ public class JdepsView {
 		// );
 
 		tfSearch = new TextField();
-		header.add(button, 0, 0);
+		btnSearch = GlyphsDude.createIconButton(FontAwesomeIcon.SEARCH);
+		header.add(btnGo, 0, 0);
 		header.add(tfSearch, 1, 0);
+		header.add(btnSearch, 2, 0);
 
-		GridPane.setHgrow(button, Priority.ALWAYS);
-
-		// GridPane.setHalignment(tfSearch, HPos.RIGHT);
-		// header.getChildren().addAll(button, tfSearch);
+		GridPane.setHgrow(btnGo, Priority.ALWAYS);
 
 		tree = new TreeView<>();
 		progressBar = new ProgressBar();
@@ -125,8 +124,12 @@ public class JdepsView {
 		return menuBar;
 	}
 
-	public Button getButton() {
-		return button;
+	public Button getGoButton() {
+		return btnGo;
+	}
+
+	public Button getSearchButton() {
+		return btnSearch;
 	}
 
 	public TreeView<String> getTree() {
@@ -135,5 +138,9 @@ public class JdepsView {
 
 	public Label getStatusLabel() {
 		return lblStatus;
+	}
+
+	public TextField getTfSearch() {
+		return tfSearch;
 	}
 }

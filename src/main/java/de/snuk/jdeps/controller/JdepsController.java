@@ -3,6 +3,7 @@ package de.snuk.jdeps.controller;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import de.snuk.jdeps.model.DataModel;
 import de.snuk.jdeps.model.MyClass;
@@ -15,6 +16,7 @@ import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 public class JdepsController {
@@ -26,7 +28,19 @@ public class JdepsController {
 		this.model = model;
 		this.view = new JdepsView();
 
-		view.getButton().setOnAction(event -> onGo());
+		view.getGoButton().setOnAction(event -> onGo());
+		view.getGoButton().disableProperty().bind(this.model.getBtnGoDisabled());
+
+		view.getSearchButton().setOnAction(event -> {
+			onSearch();
+		});
+		view.getSearchButton().disableProperty().bind(this.model.getBtnSearchDisabled());
+
+		view.getTfSearch().setOnKeyPressed(event -> {
+			if (event.getCode().equals(KeyCode.ENTER)) {
+				onSearch();
+			}
+		});
 
 		this.model.getProjectData().addListener((ListChangeListener<MyPackage>) c -> {
 			TreeView<String> tree = view.getTree();
@@ -52,6 +66,19 @@ public class JdepsController {
 		});
 	}
 
+	private void onSearch() {
+		String searchText = view.getTfSearch().getText();
+		if (!searchText.equals("")) {
+			List<MyPackage> collect = this.model.getOriginalProjectData().stream()
+					.filter(p -> p.getName().contains(searchText)).collect(Collectors.toList());
+			this.model.clearProjectData();
+			this.model.addProjectData(collect);
+		} else {
+			this.model.clearProjectData();
+			this.model.addProjectData(this.model.getOriginalProjectData());
+		}
+	}
+
 	private void onGo() {
 
 		Stage myDialog = new StartAnalyzeDialog(model.getStage(), val -> {
@@ -65,7 +92,7 @@ public class JdepsController {
 
 		if (selectedFile != null && selectedFile.exists()) {
 			model.clearProjectData();
-			view.getButton().setDisable(true);
+			model.setBtnGoDisabled(true);
 
 			String cmd = model.getJdepsPath() + " " + selectedFile.getAbsolutePath();
 
@@ -82,9 +109,10 @@ public class JdepsController {
 				protected void succeeded() {
 					super.succeeded();
 					try {
-						model.addProjectData(get());
+						// model.addProjectData(get());
+						model.addOriginalProjectData(get());
 						view.removeProgressBar();
-						view.getButton().setDisable(false);
+						model.setBtnGoDisabled(false);
 					} catch (InterruptedException | ExecutionException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
