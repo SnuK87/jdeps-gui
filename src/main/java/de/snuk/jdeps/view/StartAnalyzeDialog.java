@@ -63,6 +63,7 @@ public class StartAnalyzeDialog extends Stage {
 
 		RadioButton rbClass = new RadioButton("Class");
 		rbClass.setToggleGroup(buttonGroup);
+		rbClass.setDisable(true);
 
 		Label lblLevel = new Label("Level: ");
 		gridPane.add(lblLevel, 0, 1);
@@ -87,8 +88,6 @@ public class StartAnalyzeDialog extends Stage {
 
 		gridPane.add(btnCancel, 1, 2);
 		gridPane.add(btnStart, 2, 2);
-
-		// GridPane.setHalignment(child, value);
 
 		root.getChildren().add(gridPane);
 	}
