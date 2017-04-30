@@ -14,7 +14,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeView;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -40,19 +39,7 @@ public class JdepsView {
 
 		MenuBar menuBar = createMenuBar();
 
-		GridPane header = new GridPane();
-		header.setPadding(new Insets(5));
-
-		btnGo = GlyphsDude.createIconButton(FontAwesomeIcon.PLAY);
-		btnGo.setTooltip(new Tooltip("Start analyzing"));
-
-		tfSearch = new TextField();
-		btnSearch = GlyphsDude.createIconButton(FontAwesomeIcon.SEARCH);
-		header.add(btnGo, 0, 0);
-		header.add(tfSearch, 1, 0);
-		header.add(btnSearch, 2, 0);
-
-		GridPane.setHgrow(btnGo, Priority.ALWAYS);
+		HBox header = createHeader();
 
 		tree = new TreeView<>();
 		progressBar = new ProgressBar();
@@ -74,9 +61,37 @@ public class JdepsView {
 	}
 
 	public void show(Stage stage) {
-		stage.setTitle("jdeps GUI");
+		stage.setTitle("jdepsFX");
 		stage.setScene(scene);
 		stage.show();
+	}
+
+	private HBox createHeader() {
+		HBox header = new HBox();
+		header.setPadding(new Insets(5));
+		header.setSpacing(5.0);
+
+		btnGo = GlyphsDude.createIconButton(FontAwesomeIcon.PLAY);
+		btnGo.setTooltip(new Tooltip("Start analyzing"));
+		btnGo.setMinWidth(30.0);
+
+		Button btnHelp = GlyphsDude.createIconButton(FontAwesomeIcon.QUESTION);
+		btnHelp.setMinWidth(30.0);
+
+		Button btnConfig = GlyphsDude.createIconButton(FontAwesomeIcon.GEARS);
+		btnConfig.setMinWidth(30.0);
+
+		tfSearch = new TextField();
+		btnSearch = GlyphsDude.createIconButton(FontAwesomeIcon.SEARCH);
+		btnSearch.setMinWidth(30.0);
+
+		Pane spacer = new Pane();
+
+		header.getChildren().addAll(btnGo, btnConfig, btnHelp, spacer, tfSearch, btnSearch);
+
+		HBox.setHgrow(spacer, Priority.ALWAYS);
+
+		return header;
 	}
 
 	private HBox createFooter() {
