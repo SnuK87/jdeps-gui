@@ -122,7 +122,7 @@ public class JdepsController {
 			model.clearOriginalProjectData();
 			model.setBtnGoDisabled(true);
 
-			String cmd = model.getJdepsPath() + " " + selectedFile.getAbsolutePath();
+			String cmd = model.getJdepsPath() + " \"" + selectedFile.getAbsolutePath() + "\"";
 
 			view.addProgressBar();
 
