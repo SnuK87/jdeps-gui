@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import de.snuk.jdeps.model.DataModel;
+import de.snuk.jdeps.model.JdepsResult;
 import de.snuk.jdeps.model.MyClass;
 import de.snuk.jdeps.model.MyPackage;
 import de.snuk.jdeps.util.CommandExecuter;
@@ -126,10 +127,10 @@ public class JdepsController {
 
 			view.addProgressBar();
 
-			Task<List<MyPackage>> task = new Task<List<MyPackage>>() {
+			Task<JdepsResult> task = new Task<JdepsResult>() {
 
 				@Override
-				protected List<MyPackage> call() throws Exception {
+				protected JdepsResult call() throws Exception {
 					return CommandExecuter.executeCommand(cmd);
 				}
 
@@ -137,12 +138,24 @@ public class JdepsController {
 				protected void succeeded() {
 					super.succeeded();
 					try {
-						model.addOriginalProjectData(get());
+
+						JdepsResult jdepsResult = get();
+
+						if (jdepsResult.getPackages() != null) {
+							model.addOriginalProjectData(jdepsResult.getPackages());
+							model.setSearchDisabled(false);
+							model.setStatusText("");
+							model.setHasError(false);
+							model.setErrorLines(new ArrayList<String>());
+						} else {
+							model.setSearchDisabled(true);
+							model.setStatusText("Unexpected Error.");
+							model.setHasError(true);
+							model.setErrorLines(jdepsResult.getErrorLines());
+						}
+
 						view.removeProgressBar();
 						model.setBtnGoDisabled(false);
-						model.setSearchDisabled(false);
-						model.setStatusText("");
-						model.setHasError(false);
 					} catch (InterruptedException | ExecutionException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

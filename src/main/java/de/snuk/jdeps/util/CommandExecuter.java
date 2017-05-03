@@ -7,12 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import de.snuk.jdeps.model.JdepsResult;
 import de.snuk.jdeps.model.MyClass;
 import de.snuk.jdeps.model.MyPackage;
 
 public class CommandExecuter {
 
-	public static List<MyPackage> executeCommand(final String command) throws IOException {
+	public static JdepsResult executeCommand(final String command) throws IOException {
 		final Process process = Runtime.getRuntime().exec(command);
 		final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		final BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -25,9 +26,19 @@ public class CommandExecuter {
 		reader.close();
 		error.close();
 
+		output.forEach(System.out::println);
+
 		List<MyPackage> parseResult = parseResult(output);
 
-		return parseResult;
+		JdepsResult result;
+
+		if (!parseResult.isEmpty()) {
+			result = new JdepsResult(parseResult, null);
+		} else {
+			result = new JdepsResult(null, output);
+		}
+
+		return result;
 	}
 
 	private static List<MyPackage> parseResult(List<String> lines) {

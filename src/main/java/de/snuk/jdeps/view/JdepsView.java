@@ -11,6 +11,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeView;
@@ -33,6 +34,7 @@ public class JdepsView {
 	private FontAwesomeIconView lblStatus;
 	private Label lblStatusText;
 	private TextField tfSearch;
+	private TextArea console;
 
 	public JdepsView() {
 		scene = new Scene(new VBox(), 800, 600);
@@ -44,9 +46,11 @@ public class JdepsView {
 		tree = new TreeView<>();
 		progressBar = new ProgressBar();
 
+		HBox consolePane = createConsole();
+
 		footer = createFooter();
 
-		((VBox) scene.getRoot()).getChildren().addAll(menuBar, header, tree, footer);
+		((VBox) scene.getRoot()).getChildren().addAll(menuBar, header, tree, consolePane, footer);
 
 		VBox.setVgrow(tree, Priority.ALWAYS);
 	}
@@ -92,6 +96,18 @@ public class JdepsView {
 		HBox.setHgrow(spacer, Priority.ALWAYS);
 
 		return header;
+	}
+
+	private HBox createConsole() {
+		HBox box = new HBox();
+		console = new TextArea();
+		console.setEditable(false);
+
+		box.getChildren().add(console);
+
+		HBox.setHgrow(console, Priority.ALWAYS);
+
+		return box;
 	}
 
 	private HBox createFooter() {

@@ -18,6 +18,8 @@ public class DataModel {
 
 	private ObservableList<MyPackage> originalProjectData = FXCollections.observableArrayList();
 
+	private ObservableList<String> errorLines = FXCollections.observableArrayList();
+
 	private String jdepsPath;
 	private File selectedFile;
 	private Stage stage;
@@ -121,5 +123,14 @@ public class DataModel {
 
 	public void setStatusText(String statusText) {
 		this.statusText.set(statusText);
+	}
+
+	public ObservableList<String> getErrorLines() {
+		return errorLines;
+	}
+
+	public void setErrorLines(List<String> errorLines) {
+		this.errorLines.clear();
+		this.errorLines.addAll(errorLines);
 	}
 }
