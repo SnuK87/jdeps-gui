@@ -3,14 +3,9 @@ package de.snuk.jdeps.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import de.snuk.jdeps.model.JdepsResult;
 import de.snuk.jdeps.model.MyClass;
@@ -27,8 +22,6 @@ public class CommandExecuter {
 
 		output.addAll(reader.lines().map(s -> s.trim()).collect(Collectors.toList()));
 		output.addAll(error.lines().collect(Collectors.toList()));
-
-		Stream<Path> walk = Files.walk(Paths.get(""), FileVisitOption.FOLLOW_LINKS);
 
 		reader.close();
 		error.close();
