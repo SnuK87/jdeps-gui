@@ -45,23 +45,17 @@ public class JdepsView {
 
 		tree = new TreeView<>();
 		progressBar = new ProgressBar();
+		progressBar.setProgress(-1);
+		progressBar.setVisible(false);
 
 		HBox consolePane = createConsole();
 
 		footer = createFooter();
+		footer.getChildren().add(progressBar);
 
 		((VBox) scene.getRoot()).getChildren().addAll(menuBar, header, tree, consolePane, footer);
 
 		VBox.setVgrow(tree, Priority.ALWAYS);
-	}
-
-	public void addProgressBar() {
-		progressBar.setProgress(-1);
-		footer.getChildren().add(progressBar);
-	}
-
-	public void removeProgressBar() {
-		footer.getChildren().remove(progressBar);
 	}
 
 	public void show(Stage stage) {
@@ -181,5 +175,9 @@ public class JdepsView {
 
 	public TextField getTfSearch() {
 		return tfSearch;
+	}
+
+	public ProgressBar getProgressBar() {
+		return progressBar;
 	}
 }

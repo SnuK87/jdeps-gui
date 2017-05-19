@@ -22,6 +22,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		DataModel model = new DataModel(primaryStage);
 		JdepsController controller = new JdepsController(model);
+
 		controller.show();
 
 		deserializeConfig(model);

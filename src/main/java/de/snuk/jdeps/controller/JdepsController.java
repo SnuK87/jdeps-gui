@@ -44,6 +44,8 @@ public class JdepsController {
 		view.getGoButton().setOnAction(event -> onGo());
 		view.getGoButton().disableProperty().bind(this.model.getBtnGoDisabled());
 
+		view.getProgressBar().visibleProperty().bind(this.model.getBtnGoDisabled());
+
 		view.getSearchButton().setOnAction(event -> {
 			onSearch();
 		});
@@ -125,8 +127,6 @@ public class JdepsController {
 
 			String cmd = model.getJdepsPath() + " \"" + selectedFile.getAbsolutePath() + "\"";
 
-			view.addProgressBar();
-
 			Task<JdepsResult> task = new Task<JdepsResult>() {
 
 				@Override
@@ -154,7 +154,6 @@ public class JdepsController {
 							model.setErrorLines(jdepsResult.getErrorLines());
 						}
 
-						view.removeProgressBar();
 						model.setBtnGoDisabled(false);
 					} catch (InterruptedException | ExecutionException e) {
 						// TODO Auto-generated catch block
